@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead Swiper by Tailroad Labs</title>
+<link rel="icon" href="/logomark">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="stale" data-i18n="stale">The server in your terminal is running an older version of app.py. Press Ctrl+C there, run python3 app.py again, then reload this page.</div>
+<header>
+  <h1>
+    <a class="brand" href="https://www.tailroad.com" target="_blank" rel="noopener" title="Tailroad Labs"><img id="logomark" src="/logomark" alt="" onerror="this.parentNode.remove()"></a>
+    Lead Swiper
+    <span class="by" data-i18n="by">by</span>
+    <a class="brand" href="https://www.tailroad.com" target="_blank" rel="noopener" title="Tailroad Labs"><img id="logo" src="/logo" alt="Tailroad Labs" onerror="this.parentNode.replaceWith('Tailroad Labs')"></a>
+  </h1>
+  <button id="home-btn" data-i18n="home" data-i18n-title="homeTitle">Home</button>
+  <span id="fname" class="stat"></span>
+  <div class="spacer"></div>
+  <span class="stat"><span data-i18n="left">Left</span> <b id="s-left">0</b></span>
+  <span class="stat k"><span data-i18n="kept">Kept</span> <b id="s-kept">0</b></span>
+  <span class="stat r"><span data-i18n="removed">Removed</span> <b id="s-removed">0</b></span>
+  <button id="export" data-i18n="downloadKept" data-i18n-title="exportTitle">Download kept CSV</button>
+  <button id="sheets-btn" data-i18n="sheets">Sheets</button>
+  <button id="theme-btn"></button>
+  <select id="lang" data-i18n-title="language">
+    <option value="en">English</option>
+    <option value="ja">日本語</option>
+    <option value="zh-Hant">繁體中文</option>
+    <option value="zh-Hans">简体中文</option>
+  </select>
+</header>
+<div id="sheets" class="sheets" style="display:none">
+  <div class="sheets-head">
+    <b data-i18n="yourSheets">Your sheets</b>
+    <span class="spacer"></span>
+    <button id="new-sheet" class="primary" data-i18n="newCsv">New CSV</button>
+    <button id="sheets-close" data-i18n="close">Close</button>
+  </div>
+  <div id="sheet-list" class="sheet-list"></div>
+</div>
+<div class="progress"><i id="bar"></i></div>
+<main>
+  <div id="drop">
+    <h2 data-i18n="dropTitle">Drop a CSV here</h2>
+    <div><span data-i18n="or">or</span> <button id="pick" class="primary" data-i18n="chooseFile">choose a file</button></div>
+    <div style="font-size:13px" data-i18n="dropHint">It needs a column with website URLs. Review progress is saved automatically.</div>
+    <input id="file" type="file" accept=".csv,text/csv" hidden>
+    <div class="sheets-inline" id="drop-sheets" style="display:none">
+      <h3 data-i18n="carryOn">Your sheets</h3>
+      <div id="drop-sheet-list" class="sheet-list"></div>
+    </div>
+  </div>
+  <div id="review">
+    <div class="shot" id="shot">
+      <div class="zoom">
+        <button id="z-out" data-i18n-title="zoomOut">&minus; <kbd>-</kbd></button>
+        <span class="lvl" id="z-lvl">Fit</span>
+        <button id="z-in" data-i18n-title="zoomIn">+ <kbd>=</kbd></button>
+        <button id="z-fit" data-i18n-title="fitPanel"><span data-i18n="fit">Fit</span> <kbd>0</kbd></button>
+        <button id="z-100" data-i18n-title="actualSize">100% <kbd>1</kbd></button>
+        <span class="mode" id="z-mode"></span>
+      </div>
+      <div class="scroll" id="scroll"><div class="inner" id="inner"><img id="img" alt="" hidden></div></div>
+      <div id="shotmsg" class="msg"><div></div></div>
+      <div id="flash" class="flash"></div>
+    </div>
+    <aside>
+      <div class="info">
+        <span id="pill" class="pill none">Undecided</span><span id="pos" class="pos"></span>
+        <div class="url"><a id="url" href="#" target="_blank" rel="noopener"></a></div>
+        <dl id="fields"></dl>
+        <div class="settings">
+          <div><span data-i18n="urlColumn">URL column</span> <select id="urlcol"></select></div>
+          <div><span data-i18n="waitAfterLoad">Wait after load</span> <input id="wait" type="number" min="0" max="30" step="0.5"> <span data-i18n="seconds">s</span></div>
+          <div><label><input id="full" type="checkbox"> <span data-i18n="captureWhole">Capture whole homepage (slower)</span></label></div>
+          <div class="hint" style="text-align:left"><span data-i18n="waitHint">Raise this if sites show loading screens. Applies to new screenshots.</span> <span id="workers"></span></div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="row">
+          <button class="remove" id="btn-remove"><span data-i18n="remove">Remove</span><small data-i18n="removeKeys">← left arrow  or  X</small></button>
+          <button class="keep" id="btn-keep"><span data-i18n="keep">Keep</span><small data-i18n="keepKeys">→ right arrow  or  K</small></button>
+        </div>
+        <div class="row">
+          <button id="btn-prev" data-i18n-title="prevTitle"><span data-i18n="prev">Prev</span> <kbd>[</kbd></button>
+          <button id="btn-next" data-i18n-title="nextTitle"><span data-i18n="next">Next</span> <kbd>]</kbd></button>
+          <button id="btn-summary" data-i18n-title="summaryTitle" style="display:none"><span data-i18n="summary">Summary</span> <kbd>Esc</kbd></button>
+        </div>
+        <div class="row">
+          <button id="btn-undo"><span data-i18n="undo">Undo</span> <kbd>Z</kbd></button>
+          <button id="btn-skip"><span data-i18n="skip">Skip</span> <kbd>S</kbd></button>
+        </div>
+        <div class="row">
+          <button id="btn-open"><span data-i18n="openSite">Open site</span> <kbd>O</kbd></button>
+          <button id="btn-retake" data-i18n-title="retakeTitle"><span data-i18n="retake">Retake</span> <kbd>R</kbd></button>
+        </div>
+        <div class="row">
+          <button id="btn-full" data-i18n-title="fullThisTitle"><span data-i18n="fullThis">Full page for this one</span> <kbd>F</kbd></button>
+        </div>
+        <div class="hint" data-i18n="keysHint">Keys in boxes are shortcuts. You can change any decision at any time.</div>
+      </div>
+    </aside>
+  </div>
+  <div id="done">
+    <h2 style="margin:0" data-i18n="allDone">All done</h2>
+    <div class="stat"><span data-i18n="kept">Kept</span> <b id="d-kept">0</b> · <span data-i18n="removed">Removed</span> <b id="d-removed">0</b></div>
+    <div class="row" style="display:flex;gap:10px">
+      <button class="primary" id="export2" data-i18n="downloadKept">Download kept CSV</button>
+      <button id="btn-review"><span data-i18n="reviewDecisions">Review decisions</span> <kbd>Enter</kbd></button>
+    </div>
+    <div class="hint" data-i18n="savedIn">Also saved in the output/ folder next to app.py</div>
+  </div>
+</main>
+
+<script src="/static/i18n.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+shots/
+output/
+sessions/
+state.json
+__pycache__/
+.DS_Store
+Thumbs.db
